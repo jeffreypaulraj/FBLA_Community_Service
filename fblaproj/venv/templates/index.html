@@ -246,6 +246,7 @@
     <script>
       function processHours() {
       var enterHoursForm = document.getElementById("processHoursForm");
+      alert("You Have Successfully Recording Your Hours!")
       enterHoursForm.submit();
       }
     </script>
@@ -260,7 +261,7 @@
                 <div class="col-md-6">
                   <form action= "/processHours" class="subscribe-form" method="POST" id = "processHoursForm">
                     <div class="form-group">
-                      <input type="text" class="form-control" placeholder="Enter Hours" name = "hoursEntered">
+                      <input type="number" class="form-control" placeholder="Enter Hours" name = "hoursEntered">
                     </div>
                     <div class="form-group">
                       <input type="text" class="form-control" placeholder="Enter Description" name = "descriptionEntered">
@@ -276,6 +277,43 @@
         </div>
       </div>
 
+    </section>
+
+    <section class="ftco-section ftco-counter" id="section-counter">
+      <div class="container">
+        <div class="row justify-content-center mb-5 pb-5">
+          <div class="col-md-7 text-center heading-section heading-section-white ftco-animate">
+            <h2>Hours Summary</h2>
+            <p>Here is a snapshot of your community service as a member of FBLA</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6 col-lg-4 d-flex justify-content-center counter-wrap ftco-animate">
+            <div class="block-18 text-center">
+              <div class="text">
+                <strong class="number" data-number="{{total_hours}}">0</strong>
+                <span>Your Total Hours</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-4 d-flex justify-content-center counter-wrap ftco-animate">
+            <div class="block-18 text-center">
+              <div class="text">
+                <strong class="number" data-number="{{total_entries}}">0</strong>
+                <span>Your Total Separate Volunteering Opportunities</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-4 d-flex justify-content-center counter-wrap ftco-animate">
+            <div class="block-18 text-center">
+              <div class="text">
+                <strong class="number" data-number="{{max_hours}}">0</strong>
+                <span>The Most Hours Contributed by a Member in Your Chapter</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <section class="ftco-section">
@@ -413,42 +451,7 @@
       </div>
     </section>
     
-    <section class="ftco-section ftco-counter" id="section-counter">
-      <div class="container">
-        <div class="row justify-content-center mb-5 pb-5">
-          <div class="col-md-7 text-center heading-section heading-section-white ftco-animate">
-            <h2>Our achievements</h2>
-            <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in</p>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-6 col-lg-4 d-flex justify-content-center counter-wrap ftco-animate">
-            <div class="block-18 text-center">
-              <div class="text">
-                <strong class="number" data-number="400">0</strong>
-                <span>Customers are satisfied with our professional support</span>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6 col-lg-4 d-flex justify-content-center counter-wrap ftco-animate">
-            <div class="block-18 text-center">
-              <div class="text">
-                <strong class="number" data-number="1000">0</strong>
-                <span>Amazing preset options to be mixed and combined</span>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6 col-lg-4 d-flex justify-content-center counter-wrap ftco-animate">
-            <div class="block-18 text-center">
-              <div class="text">
-                <strong class="number" data-number="8000">0</strong>
-                <span>Average response time on live chat support channel</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+   
 
     <section class="ftco-section bg-light">
       <div class="container">
