@@ -21,6 +21,9 @@
 	<link rel="stylesheet" type="text/css" href="static/admin/css/main.css">
 <!--===============================================================================================-->
 </head>
+<script>
+	console.log('{{name_list[0]}}')
+</script>
 <body>
 	
 	<div class="limiter">
@@ -34,18 +37,18 @@
 							<tr class="table100-head">
 								<th class="column1">Name</th>
 								<th class="column2">ID Number</th>
-								<th class="column3">Grade</th>
-								<th class="column4">CSA Category</th>
-								<th class="column5">Total Hours</th>
-								<th class="column6">Total Entries</th>
+								<th class="column3">CSA Category</th>
+								<th class="column4">Total Hours</th>
+								<th class="column5">Total Entries</th>
+								<th class="column6">Grade</th>
 							</tr>
 						</thead>
 						<tbody>
-							<script>
-								for(i = 0; i <= 100; i++){
-									document.write("<tr> <td class='column1'>2017-09-29 01:22</td> <td class='column2'>200398</td> <td class='column3'>iPhone X 64Gb Grey</td><td class='column4'>$999.00</td> <td class='column5'>1</td><td class='column6'>$999.00</td></tr>");
-								}
-							</script>	
+								{%for id_number in id_number_list%}
+									<tr>
+										<tr> <td class='column1'>{{name_list[id_number_list.index(id_number)]}}</td> <td class='column2'>{{id_number}}</td><td class='column3'>{{csa_list[id_number_list.index(id_number)]}}</td><td class='column4'>{{hours_list[id_number_list.index(id_number)]}}</td> <td class='column5'>{{entries_list[id_number_list.index(id_number)]}}</td><td class='column6'>{{grade_list[id_number_list.index(id_number)]}}</td></tr>
+									</tr>
+								{% endfor %}	
 						</tbody>
 					</table>
 				</div>

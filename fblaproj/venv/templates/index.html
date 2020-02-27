@@ -30,26 +30,28 @@
     
   <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
     <div class="container">
-      <a class="navbar-brand" href="index.html">FBLA Community Service</a>
+      <a class="navbar-brand" href="/signin">FBLA Community Service</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="oi oi-menu"></span> Menu
       </button>
 
       <div class="collapse navbar-collapse" id="ftco-nav">
         <ul class="navbar-nav ml-auto">
-          <li class="nav-item active"><a href="index.html" class="nav-link">Home</a></li>
-          <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
-          <li class="nav-item"><a href="services.html" class="nav-link">Services</a></li>
-          <li class="nav-item dropdown">
+          <li class="nav-item active"><a href="#home-section" class="nav-link">Home</a></li>
+          <li class="nav-item"><a href="#csa-info" class="nav-link">CSA</a></li>
+          <li class="nav-item"><a href="#enter-hours" class="nav-link">Enter</a></li>
+          <li class="nav-item"><a href="#summary-section" class="nav-link">Summary</a></li>
+          <!-- <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="portfolio.html" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Portfolio</a>
               <div class="dropdown-menu" aria-labelledby="dropdown04">
                 <a class="dropdown-item" href="portfolio.html">Portfolio</a>
                 <a class="dropdown-item" href="portfolio-single.html">Portfolio Single</a>
               </div>
-          </li>
+          </li> -->
           <li class="nav-item"><a href="blog.html" class="nav-link">Case Studies</a></li>
-          <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
-          <li class="nav-item cta"><a href="contact.html" class="nav-link"><span>Get in touch</span></a></li>
+          <li class="nav-item"><a href="#profile-section" class="nav-link">Profile</a></li>
+          <li class="nav-item"><a href="#admin-section" class="nav-link">Admin</a></li>
+          <li class="nav-item cta"><a href="/signin" class="nav-link"><span>Log Out</span></a></li>
         </ul>
       </div>
     </div>
@@ -57,7 +59,7 @@
     <!-- END nav -->
     
     <!-- <div class="js-fullheight"> -->
-    <div class="hero-wrap js-fullheight">
+    <div class="hero-wrap js-fullheight" id = "home-section">
       <div class="overlay"></div>
       <div id="particles-js"></div>
       <div class="container">
@@ -186,8 +188,8 @@
     </div>
     -->
   
-    <section class="ftco-section">
-      <div class="container">
+    <section class="ftco-section" id = "csa-info">
+      <div class="container" >
         <div class="row justify-content-center mb-5 pb-5">
           <div class="col-md-6 text-center heading-section ftco-animate">
             <span class="subheading">Our Services</span>
@@ -207,7 +209,7 @@
           </div>
           <div class="col-md-6 col-lg-3 d-flex align-self-stretch ftco-animate">
             <div class="media block-6 services d-block text-center">
-              <div class="d-flex justify-content-center"><div class="icon color-1 d-flex justify-content-center mb-3"><span class="align-self-center icon-laptop"></span></div></div>
+              <div class="d-flex justify-content-center"><div class="icon color-1 d-flex justify-content-center mb-3"><span class="align-self-center icon-lightbulb-o"></span></div></div>
               <div class="media-body p-2 mt-3">
                 <h3 class="heading">CSA Service</h3>
                 <p>200 Hours</p>
@@ -216,7 +218,7 @@
           </div>
           <div class="col-md-6 col-lg-3 d-flex align-self-stretch ftco-animate">
             <div class="media block-6 services d-block text-center">
-              <div class="d-flex justify-content-center"><div class="icon color-2 d-flex justify-content-center mb-3"><span class="align-self-center icon-gear"></span></div></div>
+              <div class="d-flex justify-content-center"><div class="icon color-2 d-flex justify-content-center mb-3"><span class="align-self-center icon-lightbulb-o"></span></div></div>
               <div class="media-body p-2 mt-3">
                 <h3 class="heading">CSA Achievement</h3>
                 <p>500 Hours</p>
@@ -232,9 +234,9 @@
                 <p>March 1st, 2020</p>
               </div>
             </div>      
-          </div>
-          
+          </div> 
         </div>
+
         <p><center>Community and Service awards must be submitted by must be submitted by March 1. 
           Achievement awards must be submitted by April 25. Students may continue logging hours after the submission deadline. 
           However, after the deadlines members cannot submit new community service hours until August 1 of the next school year.</center></p>
@@ -250,7 +252,7 @@
       enterHoursForm.submit();
       }
     </script>
-    <section class="ftco-section-parallax">
+    <section class="ftco-section-parallax" id = "enter-hours">
       <div class="parallax-img d-flex align-items-center">
         <div class="container">
           <div class="row d-flex justify-content-center">
@@ -279,7 +281,7 @@
 
     </section>
 
-    <section class="ftco-section ftco-counter" id="section-counter">
+    <section class="ftco-section ftco-counter" id="summary-section">
       <div class="container">
         <div class="row justify-content-center mb-5 pb-5">
           <div class="col-md-7 text-center heading-section heading-section-white ftco-animate">
@@ -291,7 +293,7 @@
           <div class="col-md-6 col-lg-4 d-flex justify-content-center counter-wrap ftco-animate">
             <div class="block-18 text-center">
               <div class="text">
-                <strong class="number" data-number="{{total_hours}}">0</strong>
+                <strong class="number" data-number="{{total_hours}}">{{total_hours}}</strong>
                 <span>Your Total Hours</span>
               </div>
             </div>
@@ -299,7 +301,7 @@
           <div class="col-md-6 col-lg-4 d-flex justify-content-center counter-wrap ftco-animate">
             <div class="block-18 text-center">
               <div class="text">
-                <strong class="number" data-number="{{total_entries}}">0</strong>
+                <strong class="number" data-number="{{total_entries}}">{{total_entries}}</strong>
                 <span>Your Total Separate Volunteering Opportunities</span>
               </div>
             </div>
@@ -307,13 +309,90 @@
           <div class="col-md-6 col-lg-4 d-flex justify-content-center counter-wrap ftco-animate">
             <div class="block-18 text-center">
               <div class="text">
-                <strong class="number" data-number="{{max_hours}}">0</strong>
+                <strong class="number" data-number="{{max_hours}}">{{max_hours}}</strong>
                 <span>The Most Hours Contributed by a Member in Your Chapter</span>
               </div>
             </div>
           </div>
         </div>
       </div>
+    </section>
+
+    <script>
+      function processAdmin() {
+      var passwordEntered = document.getElementById("passwordEntered");
+      if(passwordEntered == "sbfbla"){
+        window.location = '/templates/report.html';
+      }
+      else{
+        alert("Incorrect Password!")
+      }
+      }
+    </script>
+
+    <section class="ftco-section-parallax" id = "admin-section">
+      <div class="parallax-img d-flex align-items-center">
+        <div class="container">
+          <div class="row d-flex justify-content-center">
+            <div class="col-md-7 text-center heading-section heading-section-white ftco-animate">
+              <h2>Admin</h2>
+              <p>Please enter the admin password below in order to view your chapter's overall community service data.</p>
+              <div class="row d-flex justify-content-center mt-5">
+                <div class="col-md-6">
+                  <form action= "/reportHours" class="subscribe-form" method="POST" id = "adminProcessForm">
+                    <div class="form-group">
+                      <input type="password" class="form-control" placeholder="Enter Password" name = "passwordEntered">
+                    </div>
+                    <p data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><a href="javascript:processAdmin();" class="btn btn-primary btn-outline-white px-5 py-3">Submit</a></p>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <script>
+      function processProfileChange() {
+      var profileChangeForm = document.getElementById("profileChangeForm");
+      profileChangeForm.submit();
+      }
+    </script>
+    <section class="ftco-section-parallax" id = "profile-section">
+      <div class="parallax-img d-flex align-items-center">
+        <div class="container">
+          <div class="row d-flex justify-content-center">
+            <div class="col-md-7 text-center heading-section heading-section-white ftco-animate">
+              <h2>Profile</h2>
+              <p>You can made adjustments to your profile here!</p>
+              <p>Name: {{name}}</p>
+              <p>Grade: {{grade}}</p>
+              <p>ID Number: {{idNumber}}</p>
+              <div class="row d-flex justify-content-center mt-5">
+                <div class="col-md-6">
+                  <form action= "/profileChange" class="subscribe-form" method="POST" id = "profileChangeForm">
+                    <div class="form-group">
+                      <input type="text" class="form-control" placeholder="Change Name" name = "newNameEntered">
+                    </div>
+                    <div class="form-group">
+                      <input type="number" class="form-control" placeholder="Change ID Number" name = "newidNumberEntered">
+                    </div>
+                    <div class="form-group">
+                      <input type="number" class="form-control" placeholder="Change Grade" name = "newGradeEntered">
+                    </div>
+                    <input type="hidden" name="idNumber" value={{idNumber}} />
+                    <input type="hidden" name="name" value={{name}} />
+                    <p data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><a href="javascript:processProfileChange();" class="btn btn-primary btn-outline-white px-5 py-3">Submit</a></p>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </section>
 
     <section class="ftco-section">

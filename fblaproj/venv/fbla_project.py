@@ -4,6 +4,7 @@ from firebase_admin import credentials
 from firebase_admin import db
 
 import pyrebase
+import json
 
 app = Flask(__name__)
 
@@ -51,69 +52,129 @@ def signupForm():
         'Id Number': request.form.get('idnumber') ,
         'Grade': request.form.get('grade'),
         'Total Hours': 0,
-        'Total Entries': 0
+        'Total Entries': 0,
+        'CSA Category': 'No Award'
     })
     idNumber = request.form.get('idnumber')
     name = request.form.get('username')
     email = request.form.get('emailaddress')
     password = request.form.get('password')
+    grade = request.form.get('grade')
     user_auth = auth.create_user_with_email_and_password(email, password)
-    total_entries = 0
-    total_hours = 0
-    user_db = db.reference('Users')
-    max_hours_user = user_db.order_by_child('Total Hours').limit_to_last(1).get()
-    max_hours_user_id = next(iter(max_hours_user))
-    max_hours = root.child('Users').child(max_hours_user_id).child('Total Hours').get()
-    return render_template("index.html", idNumber = idNumber, name = name, total_entries = total_entries, total_hours = 0, max_hours = max_hours)
+    
+    max_hours = get_max_hours()
+    csa_category = root.child('Users').child(idNumber).child('CSA Category').get()
+    return render_template("index.html", idNumber = idNumber, name = name, total_entries = 0, total_hours = 0, max_hours = max_hours, csa_category = csa_category, grade = grade)
 
 @app.route('/signinform', methods=['POST'])
 def signinForm():
     email = request.form.get('emailaddress')
     password = request.form.get('password')
     idNumber = email[0:8]
-    print(idNumber)
     user_auth = auth.sign_in_with_email_and_password(email, password)
-    idNumber = root.child('Users').child(idNumber).child('Id Number').get()
-    name = root.child('Users').child(idNumber).child('Name').get()
-    total_entries = root.child('Users').child(idNumber).child('Total Entries').get()
-    total_hours = root.child('Users').child(idNumber).child('Total Hours').get()
-    user_db = db.reference('Users')
-    max_hours_user = user_db.order_by_child('Total Hours').limit_to_last(1).get()
-    max_hours_user_id = next(iter(max_hours_user))
-    max_hours = root.child('Users').child(max_hours_user_id).child('Total Hours').get()
-    return render_template("index.html", idNumber = idNumber, name = name, total_entries = total_entries, total_hours = total_hours, max_hours = max_hours)
+
+    name, total_entries,csa_category,total_hours,grade = retrieve_data(idNumber)
+
+    max_hours = get_max_hours()
+    return render_template("index.html", idNumber = idNumber, name = name, total_entries = total_entries, total_hours = total_hours, max_hours = max_hours, csa_category = csa_category, grade = grade)
 
 @app.route('/processHours', methods=['POST'])
 def processHours():
     hours_entered = int(request.form.get('hoursEntered'))
     description_entered = request.form.get('descriptionEntered')
     idNumber = request.form.get('idNumber')
-    current_hours = root.child('Users').child(idNumber).child('Total Hours').get()
-    current_entries = root.child('Users').child(idNumber).child('Total Entries').get()
+    
+    name,current_entries,csa_category,current_hours,grade = retrieve_data(idNumber)
+
     total_entries = current_entries + 1
     name = request.form.get('name')
-    print(type(hours_entered))
-    root.child('Users').child(idNumber).update({'Total Hours': current_hours + hours_entered})
+    total_hours = current_hours + hours_entered
+    if total_hours <= 50:
+        root.child('Users').child(idNumber).update({'CSA Category': 'No Award'})
+    elif total_hours >50 and total_hours <= 200:
+        root.child('Users').child(idNumber).update({'CSA Category': 'CSA Community'})
+    elif total_hours > 200 and total_hours <= 500:
+        root.child('Users').child(idNumber).update({'CSA Category': 'CSA Service'})
+    else:
+        root.child('Users').child(idNumber).update({'CSA Category': 'CSA Achievement'})
+
+    root.child('Users').child(idNumber).update({'Total Hours': total_hours})
     root.child('Users').child(idNumber).update({'Total Entries': total_entries})
-    total_hours = root.child('Users').child(idNumber).child('Total Hours').get()
-    user_db = db.reference('Users')
-    max_hours_user = user_db.order_by_child('Total Hours').limit_to_last(1).get()
-    max_hours_user_id = next(iter(max_hours_user))
-    max_hours = root.child('Users').child(max_hours_user_id).child('Total Hours').get()
-    print('Max Hours:')
-    return render_template("index.html", idNumber = idNumber, name = name, total_entries = total_entries, total_hours = total_hours, max_hours = max_hours)
+    
+    max_hours = get_max_hours()
+    return render_template("index.html", idNumber = idNumber, name = name, total_entries = total_entries, total_hours = total_hours, max_hours = max_hours, csa_category = csa_category, grade = grade)
+
+@app.route('/profileChange', methods=['POST'])
+def profileChange():
+    new_grade = request.form.get('newGradeEntered')
+    new_name = request.form.get('newNameEntered')
+    idNumber = request.form.get('idNumber')
+    new_id_number = request.form.get('newidNumberEntered')
+    
+    name,total_entries,csa_category,total_hours,grade = retrieve_data(idNumber)
+    max_hours = get_max_hours()
+
+    if new_name != "":
+        root.child('Users').child(idNumber).update({'Name': new_name})
+        name = new_name
+    if new_grade != "":
+        root.child('Users').child(idNumber).update({'Grade': new_grade})
+        grade = new_grade
+    if new_id_number != "":
+        root.child('Users').child(idNumber).update({'Id Number': new_id_number})
+        user = root.child('Users').child(new_id_number).set({
+            'Name': name,
+            'Id Number': new_id_number ,
+            'Grade': grade,
+            'Total Hours': total_hours,
+            'Total Entries': total_entries,
+            'CSA Category': csa_category
+        })
+        root.child('Users').child(idNumber).delete()
+        idNumber = new_id_number
+    return render_template("index.html", idNumber = idNumber, name = name, total_entries = total_entries, total_hours = total_hours, max_hours = max_hours, csa_category = csa_category, grade = grade)
 
 
-@app.route('/reportHours', methods=['GET'])
+@app.route('/reportHours', methods=['GET','POST'])
 def reportHours():
     user_db = db.reference('Users')
     all_users = user_db.order_by_child('Grade').get()
-    return render_template("report.html", all_data = all_users)
+    all_users = dict(all_users)
+    name_list = []
+    id_number_list = []
+    grade_list = []
+    csa_list = []
+    hours_list = []
+    entries_list = []
+    for i in range (len(all_users)):
+        name_list.append(all_users[list(all_users.keys())[i]]['Name'])
+        id_number_list.append(all_users[list(all_users.keys())[i]]['Id Number'])
+        grade_list.append(all_users[list(all_users.keys())[i]]['Grade'])
+        hours_list.append(all_users[list(all_users.keys())[i]]['Total Hours'])
+        entries_list.append(all_users[list(all_users.keys())[i]]['Total Entries'])
+        csa_list.append(all_users[list(all_users.keys())[i]]['CSA Category'])
+    return render_template("report.html", all_users = all_users, name_list = name_list, id_number_list = id_number_list, grade_list = grade_list,
+    entries_list = entries_list,hours_list = hours_list, csa_list = csa_list)
 
 
 @app.route('/home')
 def home():
     return render_template("index.html")
+
+def get_max_hours():
+    user_db = db.reference('Users')
+    max_hours_user = user_db.order_by_child('Total Hours').limit_to_last(1).get()
+    max_hours_user_id = next(iter(max_hours_user))
+    max_hours = root.child('Users').child(max_hours_user_id).child('Total Hours').get()
+    return max_hours
+
+def retrieve_data(idNumber):
+    name = root.child('Users').child(idNumber).child('Name').get()
+    current_entries = root.child('Users').child(idNumber).child('Total Entries').get()
+    csa_category = root.child('Users').child(idNumber).child('CSA Category').get()
+    total_hours = root.child('Users').child(idNumber).child('Total Hours').get()
+    grade = root.child('Users').child(idNumber).child('Grade').get()
+    return name,current_entries,csa_category,total_hours,grade
     
 if __name__ == '__main__':
     print('Starting')
