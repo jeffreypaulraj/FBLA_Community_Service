@@ -6,6 +6,8 @@ from firebase_admin import db
 import pyrebase
 import json
 
+import datetime
+
 app = Flask(__name__)
 
 cred = credentials.Certificate("/Users/Jeffrey/Downloads/sbfbla-2d88f-firebase-adminsdk-9qpc2-d9b6f84a5a.json")
@@ -73,22 +75,40 @@ def signinForm():
     idNumber = email[0:8]
     user_auth = auth.sign_in_with_email_and_password(email, password)
 
-    name, total_entries,csa_category,total_hours,grade = retrieve_data(idNumber)
+    name, total_entries,csa_category,total_hours,grade, entry_log = retrieve_data(idNumber)
+    entry_date_list,entry_description_list,entry_stime_list,entry_etime_list, entry_hours_list = get_entry_log(entry_log)
+
 
     max_hours = get_max_hours()
-    return render_template("index.html", idNumber = idNumber, name = name, total_entries = total_entries, total_hours = total_hours, max_hours = max_hours, csa_category = csa_category, grade = grade)
+    return render_template("index.html", idNumber = idNumber, name = name, total_entries = total_entries, total_hours = total_hours, max_hours = max_hours, csa_category = csa_category, grade = grade,
+    entry_date_list = entry_date_list, entry_description_list = entry_description_list, entry_stime_list = entry_stime_list, entry_etime_list = entry_etime_list,
+    entry_hours_list = entry_hours_list)
 
 @app.route('/processHours', methods=['POST'])
 def processHours():
     hours_entered = int(request.form.get('hoursEntered'))
+    date_entered = request.form.get('dateEntered')
+    start_time_entered = request.form.get('startTimeEntered')
+    end_time_entered = request.form.get('endTimeEntered')
     description_entered = request.form.get('descriptionEntered')
     idNumber = request.form.get('idNumber')
-    
-    name,current_entries,csa_category,current_hours,grade = retrieve_data(idNumber)
+    current_time = datetime.datetime.now()
+    current_time_formatted = current_time.strftime("%Y-%m-%d %I:%M:%S %p")
+    name,current_entries,csa_category,current_hours,grade,entry_log = retrieve_data(idNumber)
+    entry_date_list,entry_description_list,entry_stime_list,entry_etime_list, entry_hours_list = get_entry_log(entry_log)
+
 
     total_entries = current_entries + 1
     name = request.form.get('name')
     total_hours = current_hours + hours_entered
+
+    root.child('Users').child(idNumber).child('Entry Log').child(current_time_formatted).set({
+        'Description': description_entered,
+        'Hours Entered': hours_entered,
+        'Date': date_entered,
+        'Start Time': start_time_entered,
+        'End Time': end_time_entered
+    })
     if total_hours <= 50:
         root.child('Users').child(idNumber).update({'CSA Category': 'No Award'})
     elif total_hours >50 and total_hours <= 200:
@@ -102,7 +122,9 @@ def processHours():
     root.child('Users').child(idNumber).update({'Total Entries': total_entries})
     
     max_hours = get_max_hours()
-    return render_template("index.html", idNumber = idNumber, name = name, total_entries = total_entries, total_hours = total_hours, max_hours = max_hours, csa_category = csa_category, grade = grade)
+    return render_template("index.html", idNumber = idNumber, name = name, total_entries = total_entries, total_hours = total_hours, max_hours = max_hours, csa_category = csa_category, grade = grade,
+    entry_date_list = entry_date_list, entry_description_list = entry_description_list, entry_stime_list = entry_stime_list, entry_etime_list = entry_etime_list,
+    entry_hours_list = entry_hours_list)
 
 @app.route('/profileChange', methods=['POST'])
 def profileChange():
@@ -111,9 +133,9 @@ def profileChange():
     idNumber = request.form.get('idNumber')
     new_id_number = request.form.get('newidNumberEntered')
     
-    name,total_entries,csa_category,total_hours,grade = retrieve_data(idNumber)
+    name,total_entries,csa_category,total_hours,grade,entry_log = retrieve_data(idNumber)
     max_hours = get_max_hours()
-
+    entry_date_list,entry_description_list,entry_stime_list,entry_etime_list, entry_hours_list = get_entry_log(entry_log)
     if new_name != "":
         root.child('Users').child(idNumber).update({'Name': new_name})
         name = new_name
@@ -132,7 +154,9 @@ def profileChange():
         })
         root.child('Users').child(idNumber).delete()
         idNumber = new_id_number
-    return render_template("index.html", idNumber = idNumber, name = name, total_entries = total_entries, total_hours = total_hours, max_hours = max_hours, csa_category = csa_category, grade = grade)
+    return render_template("index.html", idNumber = idNumber, name = name, total_entries = total_entries, total_hours = total_hours, max_hours = max_hours, csa_category = csa_category, grade = grade,
+    entry_date_list = entry_date_list, entry_description_list = entry_description_list, entry_stime_list = entry_stime_list, entry_etime_list = entry_etime_list,
+    entry_hours_list = entry_hours_list)
 
 
 @app.route('/reportHours', methods=['GET','POST'])
@@ -174,8 +198,29 @@ def retrieve_data(idNumber):
     csa_category = root.child('Users').child(idNumber).child('CSA Category').get()
     total_hours = root.child('Users').child(idNumber).child('Total Hours').get()
     grade = root.child('Users').child(idNumber).child('Grade').get()
-    return name,current_entries,csa_category,total_hours,grade
+    entry_log = root.child('Users').child(idNumber).child('Entry Log').get()
+    return name,current_entries,csa_category,total_hours,grade, entry_log
     
+def get_entry_log(entry_log):
+    entry_date_list = []
+    entry_stime_list = []
+    entry_etime_list = []
+    entry_description_list = []
+    entry_hours_list = []
+    for key, value in entry_log.items():
+        for key_2, value_2 in value.items():
+            if key_2 == 'Description':
+                entry_description_list.append(value_2)
+            if key_2 == 'Date':
+                entry_date_list.append(value_2)
+            if key_2 == 'Start Time':
+                entry_stime_list.append(value_2)
+            if key_2 == 'End Time':
+                entry_etime_list.append(value_2)
+            if key_2 == 'Hours Entered':
+                entry_hours_list.append(value_2)
+    return entry_date_list,entry_description_list,entry_stime_list,entry_etime_list, entry_hours_list
+            
 if __name__ == '__main__':
     print('Starting')
     app.run(debug=True)

@@ -67,7 +67,7 @@
           <div class="col-md-6 ftco-animate text-center" data-scrollax=" properties: { translateY: '70%' }">
             <h1 class="mb-4" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Welcome </h1>
             <h1 class="mb-4" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"> <strong>{{name}}</strong></h1>
-            <p data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><a href="#" class="btn btn-primary btn-outline-white px-5 py-3">Get in touch</a></p>
+            <p data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><a href="#enter-hours" class="btn btn-primary btn-outline-white px-5 py-3">Start Logging</a></p>
           </div>
         </div>
       </div>
@@ -268,6 +268,18 @@
                     <div class="form-group">
                       <input type="text" class="form-control" placeholder="Enter Description" name = "descriptionEntered">
                     </div>
+                    <p>Enter Date of Volunteering</p>
+                    <div class="form-group">
+                      <input type="date" class="form-control" placeholder="Enter Date of Volunteering" name = "dateEntered">
+                    </div>
+                    <p>Enter Start Time</p>
+                    <div class="form-group">
+                      <input type="time" class="form-control" placeholder="Enter Start Time" name = "startTimeEntered">
+                    </div>
+                    <p>Enter End Time</p>
+                    <div class="form-group">
+                      <input type="time" class="form-control" placeholder="Enter End Time" name = "endTimeEntered">
+                    </div>
                     <input type="hidden" name="idNumber" value={{idNumber}} />
                     <input type="hidden" name="name" value={{name}} />
                     <p data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><a href="javascript:processHours();" class="btn btn-primary btn-outline-white px-5 py-3">Submit</a></p>
@@ -318,6 +330,45 @@
       </div>
     </section>
 
+    <section class="ftco-section testimony-section bg-light">
+      <div class="container">
+        <div class="row justify-content-center mb-5 pb-5">
+          <div class="col-md-7 text-center heading-section ftco-animate">
+            <span class="subheading">Community Service</span>
+            <h2 class="mb-4">Entry Log</h2>
+            <p>Here is a comprehensive summary of all of your community service!</p>
+          </div>
+        </div>
+        <div class="row ftco-animate">
+          <div class="col-md-12">
+            <div class="carousel-testimony owl-carousel ftco-owl">
+              
+              {%for i in entry_date_list%}
+                <div class="item text-center">
+                  <div class="testimony-wrap p-4 pb-5">
+                    <div class="user-img mb-4" style="background-image: url(images/person_1.jpg)">
+                      <span class="quote d-flex align-items-center justify-content-center">
+                        <i class="icon-quote-left"></i>
+                      </span>
+                    </div>
+                    <div class="text">
+                      <p class="mb-3">{{entry_hours_list[entry_date_list.index(i)]}} Hours</p>
+                      <p class="mb-5">{{entry_description_list[entry_date_list.index(i)]}}</p>
+                      <p class="name">{{entry_date_list[entry_date_list.index(i)]}}</p>
+                      <span class="position">{{entry_stime_list[entry_date_list.index(i)]}} to {{entry_etime_list[entry_date_list.index(i)]}}</span>
+                    </div>
+                  </div>
+                </div>
+              
+              {% endfor %}	
+              
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <script>
       function processAdmin() {
       var passwordEntered = document.getElementById("passwordEntered");
@@ -341,7 +392,7 @@
                 <div class="col-md-6">
                   <form action= "/reportHours" class="subscribe-form" method="POST" id = "adminProcessForm">
                     <div class="form-group">
-                      <input type="password" class="form-control" placeholder="Enter Password" name = "passwordEntered">
+                      <input type="password" class="form-control" placeholder="Enter Password" id = "passwordEntered">
                     </div>
                     <p data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><a href="javascript:processAdmin();" class="btn btn-primary btn-outline-white px-5 py-3">Submit</a></p>
                   </form>
@@ -353,6 +404,7 @@
       </div>
 
     </section>
+
 
     <script>
       function processProfileChange() {
@@ -442,93 +494,6 @@
       </div>
     </section>
 
-    <section class="ftco-section testimony-section bg-light">
-      <div class="container">
-        <div class="row justify-content-center mb-5 pb-5">
-          <div class="col-md-7 text-center heading-section ftco-animate">
-            <span class="subheading">Customer Says</span>
-            <h2 class="mb-4">Our satisfied customer says</h2>
-            <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in</p>
-          </div>
-        </div>
-        <div class="row ftco-animate">
-          <div class="col-md-12">
-            <div class="carousel-testimony owl-carousel ftco-owl">
-              <div class="item text-center">
-                <div class="testimony-wrap p-4 pb-5">
-                  <div class="user-img mb-4" style="background-image: url(images/person_1.jpg)">
-                    <span class="quote d-flex align-items-center justify-content-center">
-                      <i class="icon-quote-left"></i>
-                    </span>
-                  </div>
-                  <div class="text">
-                    <p class="mb-5">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-                    <p class="name">Dennis Green</p>
-                    <span class="position">Marketing Manager</span>
-                  </div>
-                </div>
-              </div>
-              <div class="item text-center">
-                <div class="testimony-wrap p-4 pb-5">
-                  <div class="user-img mb-4" style="background-image: url(images/person_2.jpg)">
-                    <span class="quote d-flex align-items-center justify-content-center">
-                      <i class="icon-quote-left"></i>
-                    </span>
-                  </div>
-                  <div class="text">
-                    <p class="mb-5">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-                    <p class="name">Dennis Green</p>
-                    <span class="position">Interface Designer</span>
-                  </div>
-                </div>
-              </div>
-              <div class="item text-center">
-                <div class="testimony-wrap p-4 pb-5">
-                  <div class="user-img mb-4" style="background-image: url(images/person_3.jpg)">
-                    <span class="quote d-flex align-items-center justify-content-center">
-                      <i class="icon-quote-left"></i>
-                    </span>
-                  </div>
-                  <div class="text">
-                    <p class="mb-5">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-                    <p class="name">Dennis Green</p>
-                    <span class="position">UI Designer</span>
-                  </div>
-                </div>
-              </div>
-              <div class="item text-center">
-                <div class="testimony-wrap p-4 pb-5">
-                  <div class="user-img mb-4" style="background-image: url(images/person_1.jpg)">
-                    <span class="quote d-flex align-items-center justify-content-center">
-                      <i class="icon-quote-left"></i>
-                    </span>
-                  </div>
-                  <div class="text">
-                    <p class="mb-5">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-                    <p class="name">Dennis Green</p>
-                    <span class="position">Web Developer</span>
-                  </div>
-                </div>
-              </div>
-              <div class="item text-center">
-                <div class="testimony-wrap p-4 pb-5">
-                  <div class="user-img mb-4" style="background-image: url(images/person_1.jpg)">
-                    <span class="quote d-flex align-items-center justify-content-center">
-                      <i class="icon-quote-left"></i>
-                    </span>
-                  </div>
-                  <div class="text">
-                    <p class="mb-5">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-                    <p class="name">Dennis Green</p>
-                    <span class="position">System Analytics</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
     
    
 
