@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>FBLA Community Service</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--===============================================================================================-->	
+	<link rel="icon" type="image/png" href="static/admin/images/icons/favicon.ico"/>
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="static/admin/vendor/bootstrap/css/bootstrap.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="static/admin/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="static/admin/vendor/animate/animate.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="static/admin/vendor/select2/select2.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="static/admin/vendor/perfect-scrollbar/perfect-scrollbar.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="static/admin/css/util.css">
+	<link rel="stylesheet" type="text/css" href="static/admin/css/main.css">
+<!--===============================================================================================-->
+</head>
+<script>
+	console.log('{{name_list[0]}}')
+</script>
+<body>
+	
+	<div class="limiter">
+		<button  onclick="javascript:window.print()" class="btn-print">Print</button>
+
+			
+	  
+		<div class="container-table100">
+			<div class="wrap-table100">
+				<div class="table100">
+					<table>
+						<thead>
+							<tr class="table100-head">
+								<th class="column1">Date</th>
+                                <th class="column2">Hours Logged</th>
+                                <th class="column3">Description of Service</th>
+								<th class="column4">Name</th>
+								<th class="column5">ID Number</th>
+								<th class="column6">Total Hours</th>
+								<th class="column7">CSA Category</th>
+							</tr>
+						</thead>
+						<tbody>
+								{%for timestamp in timestamp_list%}
+									<tr>
+										<tr> <td class='column1'>{{date_list[timestamp_list.index(timestamp)]}}</td> <td class='column2'>{{entered_hours_list[timestamp_list.index(timestamp)]}}</td><td class='column3'>{{description_list[timestamp_list.index(timestamp)]}}</td><td class='column4'>{{name_list[timestamp_list.index(timestamp)]}}</td> <td class='column5'>{{id_number_list[timestamp_list.index(timestamp)]}}</td><td class='column6'>{{total_hours_list[timestamp_list.index(timestamp)]}}</td><td class='column7'>{{csa_list[timestamp_list.index(timestamp)]}}</td></tr>
+									</tr>
+								{% endfor %}	
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<p data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><a href="/reportHours" class="btn btn-primary btn-outline-white px-5 py-3">Comprehensive View</a></p>
+			
+			<script>
+				function getDateViewTable() {
+				var dateViewForm = document.getElementById("adminDateForm");
+				dateViewForm.submit();
+				}
+			</script>
+
+			<div class="container">
+				<div class="row d-flex justify-content-center">
+				  <div class="col-md-7 text-center heading-section heading-section-white ftco-animate">
+					<div class="row d-flex justify-content-center mt-5">
+					  <div class="col-md-6">
+						<form action= "/dateView" class="subscribe-form" method="POST" id = "adminDateForm">
+						  <p>Enter Start Date</p>
+						  <div class="form-group">
+							<input type="date" class="form-control" placeholder="Enter Start Date" name = "startDateEntered">
+						  </div>
+						  <p>Enter End Date</p>
+						  <div class="form-group">
+							<input type="date" class="form-control" placeholder="Enter End Date" name = "endDateEntered">
+						  </div>	
+						  <p data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><a href="javascript:getDateViewTable();" class="btn btn-primary btn-outline-white px-5 py-3">Weekly/Monthly View</a></p>					  
+						</form>
+					  </div>
+					</div>
+				  </div>
+				</div>
+			  </div>
+		</div>
+		<button  onclick="javascript:window.print()" class="btn-print">Print</button>
+
+	</div>
+
+
+	
+
+<!--===============================================================================================-->	
+	<script src="static/admin/vendor/jquery/jquery-3.2.1.min.js"></script>
+<!--===============================================================================================-->
+	<script src="static/admin/vendor/bootstrap/js/popper.js"></script>
+	<script src="static/admin/vendor/bootstrap/js/bootstrap.min.js"></script>
+<!--===============================================================================================-->
+	<script src="static/admin/vendor/select2/select2.min.js"></script>
+<!--===============================================================================================-->
+	<script src="static/admin/js/main.js"></script>
+
+</body>
+</html>

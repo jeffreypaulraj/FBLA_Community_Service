@@ -263,9 +263,6 @@
                 <div class="col-md-6">
                   <form action= "/processHours" class="subscribe-form" method="POST" id = "processHoursForm">
                     <div class="form-group">
-                      <input type="number" class="form-control" placeholder="Enter Hours" name = "hoursEntered">
-                    </div>
-                    <div class="form-group">
                       <input type="text" class="form-control" placeholder="Enter Description" name = "descriptionEntered">
                     </div>
                     <p>Enter Date of Volunteering</p>
@@ -391,10 +388,10 @@
               <div class="row d-flex justify-content-center mt-5">
                 <div class="col-md-6">
                   <form action= "/reportHours" class="subscribe-form" method="POST" id = "adminProcessForm">
-                    <div class="form-group">
+                    <div class="form-group" style="line-height: 30px;">
                       <input type="password" class="form-control" placeholder="Enter Password" id = "passwordEntered">
                     </div>
-                    <p data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><a href="javascript:processAdmin();" class="btn btn-primary btn-outline-white px-5 py-3">Submit</a></p>
+                    <p data-scrollax="properties: { translateY: '30%', opacity: 1.6 }" style="line-height: 30px;"><a href="javascript:processAdmin();" class="btn btn-primary btn-outline-white px-5 py-3">Submit</a></p>
                   </form>
                 </div>
               </div>
@@ -409,6 +406,9 @@
     <script>
       function processProfileChange() {
       var profileChangeForm = document.getElementById("profileChangeForm");
+      var e = document.getElementById("newField");
+      var strUser = e.options[e.selectedIndex].value;
+      alert(strUser)
       profileChangeForm.submit();
       }
     </script>
@@ -425,6 +425,13 @@
               <div class="row d-flex justify-content-center mt-5">
                 <div class="col-md-6">
                   <form action= "/profileChange" class="subscribe-form" method="POST" id = "profileChangeForm">
+                    <div class = "form-group"> 
+                      <select id="newField" name="Change Field" class = "form-control">
+                        <option value="newName">Name</option>
+                        <option value="newIDNumber">ID Number</option>
+                        <option value="newGrade">Grade</option>
+                      </select>
+                    </div>
                     <div class="form-group">
                       <input type="text" class="form-control" placeholder="Change Name" name = "newNameEntered">
                     </div>
@@ -436,6 +443,7 @@
                     </div>
                     <input type="hidden" name="idNumber" value={{idNumber}} />
                     <input type="hidden" name="name" value={{name}} />
+                    
                     <p data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><a href="javascript:processProfileChange();" class="btn btn-primary btn-outline-white px-5 py-3">Submit</a></p>
                   </form>
                 </div>

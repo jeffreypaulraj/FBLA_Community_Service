@@ -7,6 +7,7 @@ import pyrebase
 import json
 
 import datetime
+from datetime import timedelta
 
 app = Flask(__name__)
 
@@ -86,10 +87,14 @@ def signinForm():
 
 @app.route('/processHours', methods=['POST'])
 def processHours():
-    hours_entered = int(request.form.get('hoursEntered'))
     date_entered = request.form.get('dateEntered')
+    
     start_time_entered = request.form.get('startTimeEntered')
     end_time_entered = request.form.get('endTimeEntered')
+    FMT = '%H:%M'
+    elapsed_time = datetime.datetime.strptime(end_time_entered, FMT) - datetime.datetime.strptime(start_time_entered, FMT)
+    hours_entered = round(elapsed_time.seconds/3600,2)
+    
     description_entered = request.form.get('descriptionEntered')
     idNumber = request.form.get('idNumber')
     current_time = datetime.datetime.now()
@@ -109,6 +114,7 @@ def processHours():
         'Start Time': start_time_entered,
         'End Time': end_time_entered
     })
+
     if total_hours <= 50:
         root.child('Users').child(idNumber).update({'CSA Category': 'No Award'})
     elif total_hours >50 and total_hours <= 200:
@@ -118,6 +124,17 @@ def processHours():
     else:
         root.child('Users').child(idNumber).update({'CSA Category': 'CSA Achievement'})
 
+    root.child('Time Log').child(current_time_formatted).set({
+        'Name': root.child('Users').child(idNumber).child('Name').get(),
+        'ID Number': idNumber,
+        'Date of Service': date_entered,
+        'Hours Logged': hours_entered,
+        'Description of Hours': description_entered,
+        'Total Hours': total_hours,
+        'CSA Category': root.child('Users').child(idNumber).child('CSA Category').get(),
+        'Timestamp': current_time_formatted
+    })
+    
     root.child('Users').child(idNumber).update({'Total Hours': total_hours})
     root.child('Users').child(idNumber).update({'Total Entries': total_entries})
     
@@ -179,6 +196,39 @@ def reportHours():
         csa_list.append(all_users[list(all_users.keys())[i]]['CSA Category'])
     return render_template("report.html", all_users = all_users, name_list = name_list, id_number_list = id_number_list, grade_list = grade_list,
     entries_list = entries_list,hours_list = hours_list, csa_list = csa_list)
+
+@app.route('/dateView', methods=['GET','POST'])
+def dateView():
+    start_date = request.form.get('startDateEntered')
+    end_date = request.form.get('endDateEntered')
+    start_tuple = (start_date[0:4], start_date[5:7], start_date[8:10])
+    end_tuple = (end_date[0:4], end_date[5:7], end_date[8:10])
+    print(start_tuple)
+    time_db = db.reference('Time Log')
+    all_users = time_db.order_by_child('Date of Service').get()
+    all_users = dict(all_users)
+    name_list = []
+    id_number_list = []
+    description_list = []
+    csa_list = []
+    date_list = []
+    total_hours_list = []
+    entered_hours_list = []
+    timestamp_list = []
+    for i in range (len(all_users)):
+        date = all_users[list(all_users.keys())[i]]['Date of Service']
+        log_tuple = (date[0:4], date[5:7], date[8:10])
+        if start_tuple <= log_tuple <= end_tuple:
+            name_list.append(all_users[list(all_users.keys())[i]]['Name'])
+            id_number_list.append(all_users[list(all_users.keys())[i]]['ID Number'])
+            description_list.append(all_users[list(all_users.keys())[i]]['Description of Hours'])
+            total_hours_list.append(all_users[list(all_users.keys())[i]]['Total Hours'])
+            entered_hours_list.append(all_users[list(all_users.keys())[i]]['Hours Logged'])
+            date_list.append(all_users[list(all_users.keys())[i]]['Date of Service'])
+            csa_list.append(all_users[list(all_users.keys())[i]]['CSA Category'])
+            timestamp_list.append(all_users[list(all_users.keys())[i]]['Timestamp'])
+    return render_template("dateview.html", all_users = all_users, name_list = name_list, id_number_list = id_number_list, description_list = description_list,
+    date_list = date_list,total_hours_list = total_hours_list, csa_list = csa_list, entered_hours_list = entered_hours_list, timestamp_list = timestamp_list)
 
 
 @app.route('/home')
