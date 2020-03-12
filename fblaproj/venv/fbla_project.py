@@ -41,11 +41,11 @@ def index():
 
 @app.route('/signin')
 def signin():
-    return render_template("signin.html")
+    return render_template("newsignin.html", message = "")
 
 @app.route('/signup')
 def signup():
-    return render_template("signup.html")
+    return render_template("newsignup.html")
 
 @app.route('/signupform', methods=['POST'])
 def signupForm():
@@ -74,16 +74,19 @@ def signinForm():
     email = request.form.get('emailaddress')
     password = request.form.get('password')
     idNumber = email[0:8]
-    user_auth = auth.sign_in_with_email_and_password(email, password)
+    try:
+        user_auth = auth.sign_in_with_email_and_password(email, password)
 
-    name, total_entries,csa_category,total_hours,grade, entry_log = retrieve_data(idNumber)
-    entry_date_list,entry_description_list,entry_stime_list,entry_etime_list, entry_hours_list = get_entry_log(entry_log)
+        name, total_entries,csa_category,total_hours,grade, entry_log = retrieve_data(idNumber)
+        entry_date_list,entry_description_list,entry_stime_list,entry_etime_list, entry_hours_list = get_entry_log(entry_log)
 
 
-    max_hours = get_max_hours()
-    return render_template("index.html", idNumber = idNumber, name = name, total_entries = total_entries, total_hours = total_hours, max_hours = max_hours, csa_category = csa_category, grade = grade,
-    entry_date_list = entry_date_list, entry_description_list = entry_description_list, entry_stime_list = entry_stime_list, entry_etime_list = entry_etime_list,
-    entry_hours_list = entry_hours_list)
+        max_hours = get_max_hours()
+        return render_template("index.html", idNumber = idNumber, name = name, total_entries = total_entries, total_hours = total_hours, max_hours = max_hours, csa_category = csa_category, grade = grade,
+        entry_date_list = entry_date_list, entry_description_list = entry_description_list, entry_stime_list = entry_stime_list, entry_etime_list = entry_etime_list,
+        entry_hours_list = entry_hours_list)
+    except:
+        return render_template("newsignin.html", message = "Failed Login. Try Again!")
 
 @app.route('/processHours', methods=['POST'])
 def processHours():
