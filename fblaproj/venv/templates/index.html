@@ -49,6 +49,7 @@
               </div>
           </li> -->
           <li class="nav-item"><a href="#profile-section" class="nav-link">Profile</a></li>
+          <li class="nav-item"><a href="#faq-section" class="nav-link">FAQ</a></li>
           <li class="nav-item"><a href="#admin-section" class="nav-link">Admin</a></li>
           <li class="nav-item cta"><a href="/signin" class="nav-link"><span>Log Out</span></a></li>
         </ul>
@@ -66,7 +67,7 @@
           <div class="col-md-6 ftco-animate text-center" data-scrollax=" properties: { translateY: '70%' }">
             <h1 class="mb-4" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Welcome </h1>
             <h1 class="mb-4" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"> <strong>{{name}}</strong></h1>
-            <p data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><a href="#enter-hours" class="btn btn-primary btn-outline-white px-5 py-3">Start Logging</a></p>
+            <p data-scrollax="properties: { translateY: '30%', opacity: 0.6 }"><a href="#enter-hours" class="btn btn-primary px-4">Start Logging</a></p>
           </div>
         </div>
       </div>
@@ -344,7 +345,7 @@
                   <div class="testimony-wrap p-4 pb-5">
                     <div class="user-img mb-4" style="background-image: url(images/person_1.jpg)">
                       <span class="quote d-flex align-items-center justify-content-center">
-                        <i class="icon-quote-left"></i>
+                        <i class="fas fa-hands-helping"></i>
                       </span>
                     </div>
                     <div class="text">
@@ -377,6 +378,133 @@
       }
     </script>
 
+<script>
+  function processProfileChange() {
+  var profileChangeForm = document.getElementById("profileChangeForm");
+  var e = document.getElementById("newField");
+  var strUser = e.options[e.selectedIndex].value;
+  alert(strUser)
+  profileChangeForm.submit();
+  }
+</script>
+<section class="ftco-section-parallax" id = "profile-section">
+  <div class="parallax-img d-flex align-items-center">
+    <div class="container">
+      <div class="row d-flex justify-content-center">
+        <div class="col-md-7 text-center heading-section heading-section-white ftco-animate">
+          <h2>Profile</h2>
+          <p>You can made adjustments to your profile here!</p>
+          <p>Name: {{name}}</p>
+          <p>Grade: {{grade}}</p>
+          <p>ID Number: {{idNumber}}</p>
+          <div class="row d-flex justify-content-center mt-5">
+            <div class="col-md-6">
+              <form action= "/profileChange" class="subscribe-form" method="POST" id = "profileChangeForm">
+                <div class = "form-group"> 
+                  <select id="newField" name="Change Field" class = "form-control">
+                    <option value="newName">Name</option>
+                    <option value="newIDNumber">ID Number</option>
+                    <option value="newGrade">Grade</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <input type="text" class="form-control" placeholder="Change Name" name = "newNameEntered">
+                </div>
+                <div class="form-group">
+                  <input type="number" class="form-control" placeholder="Change ID Number" name = "newidNumberEntered">
+                </div>
+                <div class="form-group">
+                  <input type="number" class="form-control" placeholder="Change Grade" name = "newGradeEntered">
+                </div>
+                <input type="hidden" name="idNumber" value={{idNumber}} />
+                <input type="hidden" name="name" value={{name}} />
+                
+                <p data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><a href="javascript:processProfileChange();" class="btn btn-primary btn-outline-white px-5 py-3">Submit</a></p>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<script>
+  function processQuestion() {
+    var questionAskedForm = document.getElementById("questionAskedForm");
+    questionAskedForm.submit();
+  }
+</script>
+
+<section class="ftco-section testimony-section bg-light" id = "faq-section">
+  <div class="container">
+    <div class="row justify-content-center mb-5 pb-5">
+      <div class="col-md-7 text-center heading-section ftco-animate">
+        <span class="subheading">Community Service</span>
+        <h2 class="mb-4">Frequently Asked Questions</h2>
+        <p>A quick fix for any problems you may encounter during your community service experience!</p>
+      </div>
+    </div>
+    <div class="row ftco-animate">
+      <div class="col-md-12">
+        <div class="carousel-testimony owl-carousel ftco-owl">
+          
+            <div class="item text-center">
+              <div class="testimony-wrap p-4 pb-5">
+                <div class="user-img mb-4" style="background-image: url(images/person_1.jpg)">
+                  <span class="quote d-flex align-items-center justify-content-center">
+                    <i class="icon-quote-left"></i>
+                  </span>
+                </div>
+                <div class="text">
+                  <p class="mb-2">What should I do if I logged my hours incorrectly?</p>
+                  <p class="name">Contact your advisor, and the extraneous hours will be removed from your account</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="item text-center">
+              <div class="testimony-wrap p-4 pb-5">
+                <div class="user-img mb-4" style="background-image: url(images/person_1.jpg)">
+                  <span class="quote d-flex align-items-center justify-content-center">
+                    <i class="icon-quote-left"></i>
+                  </span>
+                </div>
+                <div class="text">
+                  <p class="mb-2">Can I check the service of my sibling or friend?</p>
+                  <p class="name">No, you cannot access another member's account, but they can create their own account to track their service.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="item text-center">
+              <div class="testimony-wrap p-4 pb-5">
+                <div class="user-img mb-4" style="background-image: url(images/person_1.jpg)">
+                  <span class="quote d-flex align-items-center justify-content-center">
+                    <i class="icon-quote-left"></i>
+                  </span>
+                </div>
+                <div class="text">
+                  <form action= "/questionAsked" class="subscribe-form" method="POST" id = "questionAskedForm">
+                    <p class="mb-2">Ask your own question! </p>
+                    <p class="mb-3">We will get back to you as soon as possible</p>
+                    <input type="text" class="form-control" placeholder="Question" name = "new_question">
+                    <input type="hidden" name="idNumber" value={{idNumber}} />
+                    <p data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><a href="javascript:processQuestion();" class="btn btn-primary btn-outline-white px-5 py-3">Submit</a></p>
+                  </form>
+                </div>
+              </div>
+            </div>
+          
+          
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
     <section class="ftco-section-parallax" id = "admin-section">
       <div class="parallax-img d-flex align-items-center">
         <div class="container">
@@ -402,57 +530,7 @@
     </section>
 
 
-    <script>
-      function processProfileChange() {
-      var profileChangeForm = document.getElementById("profileChangeForm");
-      var e = document.getElementById("newField");
-      var strUser = e.options[e.selectedIndex].value;
-      alert(strUser)
-      profileChangeForm.submit();
-      }
-    </script>
-    <section class="ftco-section-parallax" id = "profile-section">
-      <div class="parallax-img d-flex align-items-center">
-        <div class="container">
-          <div class="row d-flex justify-content-center">
-            <div class="col-md-7 text-center heading-section heading-section-white ftco-animate">
-              <h2>Profile</h2>
-              <p>You can made adjustments to your profile here!</p>
-              <p>Name: {{name}}</p>
-              <p>Grade: {{grade}}</p>
-              <p>ID Number: {{idNumber}}</p>
-              <div class="row d-flex justify-content-center mt-5">
-                <div class="col-md-6">
-                  <form action= "/profileChange" class="subscribe-form" method="POST" id = "profileChangeForm">
-                    <div class = "form-group"> 
-                      <select id="newField" name="Change Field" class = "form-control">
-                        <option value="newName">Name</option>
-                        <option value="newIDNumber">ID Number</option>
-                        <option value="newGrade">Grade</option>
-                      </select>
-                    </div>
-                    <div class="form-group">
-                      <input type="text" class="form-control" placeholder="Change Name" name = "newNameEntered">
-                    </div>
-                    <div class="form-group">
-                      <input type="number" class="form-control" placeholder="Change ID Number" name = "newidNumberEntered">
-                    </div>
-                    <div class="form-group">
-                      <input type="number" class="form-control" placeholder="Change Grade" name = "newGradeEntered">
-                    </div>
-                    <input type="hidden" name="idNumber" value={{idNumber}} />
-                    <input type="hidden" name="name" value={{name}} />
-                    
-                    <p data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><a href="javascript:processProfileChange();" class="btn btn-primary btn-outline-white px-5 py-3">Submit</a></p>
-                  </form>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </section>
+    
     <!--
 
     
@@ -609,7 +687,7 @@
           <div class="col-md-12 text-center">
 
             <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-  Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="icon-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+  Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made using <a href="https://colorlib.com" target="_blank">Colorlib</a>
   <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
           </div>
         </div>

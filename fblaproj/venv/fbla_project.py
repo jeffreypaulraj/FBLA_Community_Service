@@ -41,6 +41,7 @@ def index():
 
 @app.route('/signin')
 def signin():
+    print("Hello")
     return render_template("newsignin.html", message = "")
 
 @app.route('/signup')
@@ -55,7 +56,7 @@ def signupForm():
         'Id Number': request.form.get('idnumber') ,
         'Grade': request.form.get('grade'),
         'Total Hours': 0,
-        'Total Entries': 0,
+        'Total Entries': 0, 
         'CSA Category': 'No Award'
     })
     idNumber = request.form.get('idnumber')
@@ -63,6 +64,15 @@ def signupForm():
     email = request.form.get('emailaddress')
     password = request.form.get('password')
     grade = request.form.get('grade')
+
+    root.child('Users').child(idNumber).child('Entry Log').child('0').set({
+        'Description': "This is the start of your community service log",
+        'Hours Entered': 0,
+        'Date': "",
+        'Start Time': "Welcome",
+        'End Time': "FBLA Community Service"
+    })
+
     user_auth = auth.create_user_with_email_and_password(email, password)
     
     max_hours = get_max_hours()
@@ -71,21 +81,28 @@ def signupForm():
 
 @app.route('/signinform', methods=['POST'])
 def signinForm():
+    print('Here')
     email = request.form.get('emailaddress')
     password = request.form.get('password')
     idNumber = email[0:8]
+    print('Email')
+    print(request.form.get('emailaddress'))
+    print(password)
     try:
         user_auth = auth.sign_in_with_email_and_password(email, password)
+        print(user_auth)
 
         name, total_entries,csa_category,total_hours,grade, entry_log = retrieve_data(idNumber)
+        print(entry_log)
         entry_date_list,entry_description_list,entry_stime_list,entry_etime_list, entry_hours_list = get_entry_log(entry_log)
-
 
         max_hours = get_max_hours()
         return render_template("index.html", idNumber = idNumber, name = name, total_entries = total_entries, total_hours = total_hours, max_hours = max_hours, csa_category = csa_category, grade = grade,
         entry_date_list = entry_date_list, entry_description_list = entry_description_list, entry_stime_list = entry_stime_list, entry_etime_list = entry_etime_list,
         entry_hours_list = entry_hours_list)
-    except:
+    except Exception as e:
+        
+        print(e)
         return render_template("newsignin.html", message = "Failed Login. Try Again!")
 
 @app.route('/processHours', methods=['POST'])
@@ -102,13 +119,6 @@ def processHours():
     idNumber = request.form.get('idNumber')
     current_time = datetime.datetime.now()
     current_time_formatted = current_time.strftime("%Y-%m-%d %I:%M:%S %p")
-    name,current_entries,csa_category,current_hours,grade,entry_log = retrieve_data(idNumber)
-    entry_date_list,entry_description_list,entry_stime_list,entry_etime_list, entry_hours_list = get_entry_log(entry_log)
-
-
-    total_entries = current_entries + 1
-    name = request.form.get('name')
-    total_hours = current_hours + hours_entered
 
     root.child('Users').child(idNumber).child('Entry Log').child(current_time_formatted).set({
         'Description': description_entered,
@@ -117,6 +127,11 @@ def processHours():
         'Start Time': start_time_entered,
         'End Time': end_time_entered
     })
+    name,current_entries,csa_category,current_hours,grade,entry_log = retrieve_data(idNumber)
+    entry_date_list,entry_description_list,entry_stime_list,entry_etime_list, entry_hours_list = get_entry_log(entry_log)
+    total_entries = current_entries + 1
+    name = request.form.get('name')
+    total_hours = current_hours + hours_entered
 
     if total_hours <= 50:
         root.child('Users').child(idNumber).update({'CSA Category': 'No Award'})
@@ -166,7 +181,7 @@ def profileChange():
         root.child('Users').child(idNumber).update({'Id Number': new_id_number})
         user = root.child('Users').child(new_id_number).set({
             'Name': name,
-            'Id Number': new_id_number ,
+            'Id Number': new_id_number,
             'Grade': grade,
             'Total Hours': total_hours,
             'Total Entries': total_entries,
@@ -174,6 +189,19 @@ def profileChange():
         })
         root.child('Users').child(idNumber).delete()
         idNumber = new_id_number
+    return render_template("index.html", idNumber = idNumber, name = name, total_entries = total_entries, total_hours = total_hours, max_hours = max_hours, csa_category = csa_category, grade = grade,
+    entry_date_list = entry_date_list, entry_description_list = entry_description_list, entry_stime_list = entry_stime_list, entry_etime_list = entry_etime_list,
+    entry_hours_list = entry_hours_list)
+
+@app.route('/questionAsked', methods=['POST'])
+def questionAsked():
+    question = request.form.get('new_question')
+    idNumber = request.form.get('idNumber')
+    
+    name,total_entries,csa_category,total_hours,grade,entry_log = retrieve_data(idNumber)
+    max_hours = get_max_hours()
+    entry_date_list,entry_description_list,entry_stime_list,entry_etime_list, entry_hours_list = get_entry_log(entry_log)
+    root.child('Questions').child(name).set(question)
     return render_template("index.html", idNumber = idNumber, name = name, total_entries = total_entries, total_hours = total_hours, max_hours = max_hours, csa_category = csa_category, grade = grade,
     entry_date_list = entry_date_list, entry_description_list = entry_description_list, entry_stime_list = entry_stime_list, entry_etime_list = entry_etime_list,
     entry_hours_list = entry_hours_list)
