@@ -43,17 +43,26 @@
 								<th class="column4">Total Hours</th>
 								<th class="column5">Total Entries</th>
 								<th class="column6">Grade</th>
+								<th class="column7">Prediction</th>
 							</tr>
 						</thead>
 						<tbody>
 								{%for id_number in id_number_list%}
 									<tr>
-										<tr> <td class='column1'>{{name_list[id_number_list.index(id_number)]}}</td> <td class='column2'>{{id_number}}</td><td class='column3'>{{csa_list[id_number_list.index(id_number)]}}</td><td class='column4'>{{hours_list[id_number_list.index(id_number)]}}</td> <td class='column5'>{{entries_list[id_number_list.index(id_number)]}}</td><td class='column6'>{{grade_list[id_number_list.index(id_number)]}}</td></tr>
+										<tr> <td class='column1'>{{name_list[id_number_list.index(id_number)]}}</td> <td class='column2'>{{id_number}}</td><td class='column3'>{{csa_list[id_number_list.index(id_number)]}}</td><td class='column4'>{{hours_list[id_number_list.index(id_number)]}}</td> <td class='column5'>{{entries_list[id_number_list.index(id_number)]}}</td><td class='column6'>{{grade_list[id_number_list.index(id_number)]}}</td><td class='column7'>{{prediction_list[id_number_list.index(id_number)]}}</td></tr>
 									</tr>
 								{% endfor %}	
 						</tbody>
 					</table>
 				</div>
+				
+			</div>
+			<div>
+				<img src="/initialplot.png" alt="Distribution of Community Service Tiers in Chapter">
+			</div>
+			</br>
+			<div>
+				<img src="/secondplot.png" alt="Total Hours Per Member in Chapter">
 			</div>
 			<p data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><a href="/reportHours" class="btn btn-primary btn-outline-white px-5 py-3">Comprehensive View</a></p>
 			

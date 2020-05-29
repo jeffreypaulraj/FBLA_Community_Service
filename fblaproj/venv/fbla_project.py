@@ -2,12 +2,25 @@ from flask import Flask, redirect, url_for, render_template, Response, request
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
+import requests
+import datetime as dt
+from datetime import date
 
 import pyrebase
 import json
 
 import datetime
 from datetime import timedelta
+
+import matplotlib.pyplot as plt
+import matplotlib
+import io
+import numpy as np
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from sklearn.linear_model import LinearRegression
+
+matplotlib.use('agg')
+
 
 app = Flask(__name__)
 
@@ -35,6 +48,33 @@ config = {
 firebase_auth_setup = pyrebase.initialize_app(config)
 
 auth = firebase_auth_setup.auth()
+today = date.today()
+yesterday = today - dt.timedelta(days=1)
+today = today.strftime("%Y-%m-%d")
+yesterday = yesterday.strftime("%Y-%m-%d")
+
+#Retrieves all of the latest news about community service
+def retrieve_news_info(all_news):
+    all_headline_titles = []
+    all_headline_links = []
+    all_headline_image_links = []
+    all_headline_authors = []
+    all_headline_descriptions = []
+    all_headline_publish_dates = []
+    for article in all_news:
+        all_headline_titles.append(article['title'])
+        all_headline_links.append(article['url'])
+        all_headline_image_links.append(article['urlToImage'])
+        all_headline_authors.append(article['author'])
+        all_headline_descriptions.append(article['description'])
+        all_headline_publish_dates.append(article['publishedAt'])
+    return all_headline_titles, all_headline_links, all_headline_image_links, all_headline_authors, all_headline_descriptions,all_headline_publish_dates
+
+news_url = "https://newsapi.org/v2/everything?q=volunteering%20new%20jersey&from=" + yesterday + "&to=" + today + "&sortBy=popularity&apiKey=2ca74f9bf01f4f648650d30f0381f633"
+news_JSON = requests.get(news_url).json()
+all_news = news_JSON['articles']
+all_headline_titles, all_headline_links, all_headline_image_links, all_headline_authors, all_headline_descriptions,all_headline_publish_dates = retrieve_news_info(all_news)
+
 
 #Displays the Sign In Page
 @app.route('/')
@@ -78,7 +118,8 @@ def signupForm():
     
     max_hours = get_max_hours()
     csa_category = root.child('Users').child(idNumber).child('CSA Category').get()
-    return render_template("index.html", idNumber = idNumber, name = name, total_entries = 0, total_hours = 0, max_hours = max_hours, csa_category = csa_category, grade = grade)
+    return render_template("index.html", idNumber = idNumber, name = name, total_entries = 0, total_hours = 0, max_hours = max_hours, csa_category = csa_category, grade = grade,
+    all_headline_titles = all_headline_titles,all_headline_links = all_headline_links, all_headline_image_links = all_headline_image_links, all_headline_authors = all_headline_authors, all_headline_descriptions = all_headline_descriptions,all_headline_publish_dates = all_headline_publish_dates)
 
 #Processes Sign In Information
 @app.route('/signinform', methods=['POST'])
@@ -96,7 +137,7 @@ def signinForm():
         max_hours = get_max_hours()
         return render_template("index.html", idNumber = idNumber, name = name, total_entries = total_entries, total_hours = total_hours, max_hours = max_hours, csa_category = csa_category, grade = grade,
         entry_date_list = entry_date_list, entry_description_list = entry_description_list, entry_stime_list = entry_stime_list, entry_etime_list = entry_etime_list,
-        entry_hours_list = entry_hours_list)
+        entry_hours_list = entry_hours_list,all_headline_titles = all_headline_titles,all_headline_links = all_headline_links, all_headline_image_links = all_headline_image_links, all_headline_authors = all_headline_authors, all_headline_descriptions = all_headline_descriptions,all_headline_publish_dates = all_headline_publish_dates)
     #If login is unsuccessful, displays an error message
     except Exception as e:
         return render_template("newsignin.html", message = "Failed Login. Try Again!")
@@ -160,7 +201,7 @@ def processHours():
     max_hours = get_max_hours()
     return render_template("index.html", idNumber = idNumber, name = name, total_entries = total_entries, total_hours = total_hours, max_hours = max_hours, csa_category = csa_category, grade = grade,
     entry_date_list = entry_date_list, entry_description_list = entry_description_list, entry_stime_list = entry_stime_list, entry_etime_list = entry_etime_list,
-    entry_hours_list = entry_hours_list)
+    entry_hours_list = entry_hours_list,all_headline_titles = all_headline_titles,all_headline_links = all_headline_links, all_headline_image_links = all_headline_image_links, all_headline_authors = all_headline_authors, all_headline_descriptions = all_headline_descriptions,all_headline_publish_dates = all_headline_publish_dates)
 
 #Processes changes to a user's profile
 @app.route('/profileChange', methods=['POST'])
@@ -198,7 +239,7 @@ def profileChange():
 
     return render_template("index.html", idNumber = idNumber, name = name, total_entries = total_entries, total_hours = total_hours, max_hours = max_hours, csa_category = csa_category, grade = grade,
     entry_date_list = entry_date_list, entry_description_list = entry_description_list, entry_stime_list = entry_stime_list, entry_etime_list = entry_etime_list,
-    entry_hours_list = entry_hours_list)
+    entry_hours_list = entry_hours_list, all_headline_titles = all_headline_titles,all_headline_links = all_headline_links, all_headline_image_links = all_headline_image_links, all_headline_authors = all_headline_authors, all_headline_descriptions = all_headline_descriptions,all_headline_publish_dates = all_headline_publish_dates)
 
 @app.route('/questionAsked', methods=['POST'])
 def questionAsked():
@@ -214,35 +255,18 @@ def questionAsked():
 
     return render_template("index.html", idNumber = idNumber, name = name, total_entries = total_entries, total_hours = total_hours, max_hours = max_hours, csa_category = csa_category, grade = grade,
     entry_date_list = entry_date_list, entry_description_list = entry_description_list, entry_stime_list = entry_stime_list, entry_etime_list = entry_etime_list,
-    entry_hours_list = entry_hours_list)
+    entry_hours_list = entry_hours_list,all_headline_titles = all_headline_titles,all_headline_links = all_headline_links, all_headline_image_links = all_headline_image_links, all_headline_authors = all_headline_authors, all_headline_descriptions = all_headline_descriptions,all_headline_publish_dates = all_headline_publish_dates)
 
 #Creates a log of the community service of all of the chapter's members
 @app.route('/reportHours', methods=['GET','POST'])
-def reportHours():
-    #Retrieves all the entries from the Firebase Database
+def reportHours(): 
     user_db = db.reference('Users')
     all_users = user_db.order_by_child('Grade').get()
     all_users = dict(all_users)
-    
-    #Creates lists to store all of the entries' attributes
-    name_list = []
-    id_number_list = []
-    grade_list = []
-    csa_list = []
-    hours_list = []
-    entries_list = []
 
-    #Compiles a list of all the entries
-    for i in range (len(all_users)):
-        name_list.append(all_users[list(all_users.keys())[i]]['Name'])
-        id_number_list.append(all_users[list(all_users.keys())[i]]['Id Number'])
-        grade_list.append(all_users[list(all_users.keys())[i]]['Grade'])
-        hours_list.append(all_users[list(all_users.keys())[i]]['Total Hours'])
-        entries_list.append(all_users[list(all_users.keys())[i]]['Total Entries'])
-        csa_list.append(all_users[list(all_users.keys())[i]]['CSA Category'])
-
+    name_list,id_number_list,grade_list,csa_list, hours_list, entries_list, prediction_list = get_all_lists()
     return render_template("report.html", all_users = all_users, name_list = name_list, id_number_list = id_number_list, grade_list = grade_list,
-    entries_list = entries_list,hours_list = hours_list, csa_list = csa_list)
+    entries_list = entries_list,hours_list = hours_list, csa_list = csa_list, prediction_list = prediction_list)
 
 #Returns the weekly/monthly reports for the admin
 @app.route('/dateView', methods=['GET','POST'])
@@ -288,6 +312,43 @@ def dateView():
 def home():
     return render_template("index.html")
 
+@app.route('/initialplot.png')
+def initial_plot_png():
+    name_list,id_number_list,grade_list,csa_list, hours_list, entries_list, prediction_list = get_all_lists()
+    count_none = 0
+    count_community = 0
+    count_service = 0
+    count_achievement = 0
+    for i in csa_list:
+        if i == "No Award":
+            count_none +=1
+        elif i == "CSA Community":
+            count_community +=1
+        elif i == "CSA Service":
+            count_service +=1
+        elif i == "CSA Achievement":
+            count_achievement +=1
+    count_tot = 100/(count_none + count_community + count_service + count_achievement)
+    count_none = count_none*count_tot
+    count_community = count_community*count_tot
+    count_service = count_service*count_tot
+    count_achievement = count_achievement*count_tot
+
+    fig = get_service_pie_chart(count_none, count_community, count_service, count_achievement)
+    output = io.BytesIO()
+    FigureCanvas(fig).print_png(output)
+    return Response(output.getvalue(), mimetype='image/png')
+
+@app.route('/secondplot.png')
+def second_plot_png():
+    name_list,id_number_list,grade_list,csa_list, hours_list, entries_list, prediction_list = get_all_lists()
+
+    fig = get_service_bar_chart(name_list, hours_list)
+    output = io.BytesIO()
+    FigureCanvas(fig).print_png(output)
+    return Response(output.getvalue(), mimetype='image/png')
+
+
 #Finds the maximum amount of hours of any member in the chapter
 def get_max_hours():
     user_db = db.reference('Users')
@@ -315,7 +376,9 @@ def get_entry_log(entry_log):
     entry_description_list = []
     entry_hours_list = []
     print('entry_log*1: {}'.format(entry_log))
-    for value in entry_log:
+    for key_2, value in entry_log.items():
+        print('Value: ')
+        print(value)
         for key, value_2 in value.items():
             if key == 'Description':
                 entry_description_list.append(value_2)
@@ -329,6 +392,79 @@ def get_entry_log(entry_log):
                 entry_hours_list.append(value_2)
     return entry_date_list,entry_description_list,entry_stime_list,entry_etime_list, entry_hours_list
             
+def get_all_lists():
+    #Retrieves all the entries from the Firebase Database
+    user_db = db.reference('Users')
+    all_users = user_db.order_by_child('Grade').get()
+    all_users = dict(all_users)
+    
+    #Creates lists to store all of the entries' attributes
+    name_list = []
+    id_number_list = []
+    grade_list = []
+    csa_list = []
+    hours_list = []
+    entries_list = []
+    prediction_list = []
+
+    #Compiles a list of all the entries
+    for i in range (len(all_users)):
+        name_list.append(all_users[list(all_users.keys())[i]]['Name'])
+        id_number_list.append(all_users[list(all_users.keys())[i]]['Id Number'])
+        grade_list.append(all_users[list(all_users.keys())[i]]['Grade'])
+        hours_list.append(all_users[list(all_users.keys())[i]]['Total Hours'])
+        entries_list.append(all_users[list(all_users.keys())[i]]['Total Entries'])
+        csa_list.append(all_users[list(all_users.keys())[i]]['CSA Category'])    
+        if entries_list[i] == 0:
+            prediction_list.append(0)
+        else:
+            prediction_list.append(round((entries_list[i] + 1)*hours_list[i]/entries_list[i],1))
+
+    
+    return name_list,id_number_list,grade_list,csa_list, hours_list, entries_list, prediction_list
+
+def get_prediction(hours_list):
+    i= 0
+    big_arr = []
+
+    for h in hours_list:
+        arr = []
+        arr.append(i)
+        arr.append(h)
+        big_arr.append(arr)
+    
+    X = np.array(big_arr)
+    y = np.dot(X, np.array([1,2])) + 0
+    reg = LinearRegression().fit(X, y)
+    pred = reg.predict(np.array([[0, len(hours_list)+1]]))
+    return pred
+
+def get_service_pie_chart(a,b,c,d):
+    labels = 'No Award', 'CSA Community', 'CSA Service', 'CSA Achievement'
+    sizes = [a,b,c,d]
+    explode = (0,0,0,0)
+    fig1, ax1 = plt.subplots()
+    ax1.pie(sizes, explode = explode, labels = labels,autopct='%1.1f%%', shadow=True, startangle=90)
+    ax1.axis('equal')
+    ax1.set_title('Distribution of Community Service Tiers in Chapter')
+    return fig1
+
+def get_service_bar_chart(name_list, hours_list):
+    plt.rcdefaults()
+    fig, ax = plt.subplots()
+    fig.set_size_inches(11.5, 7.5)
+
+    y_pos = np.arange(len(name_list))
+    ax.barh(y_pos, hours_list, xerr=0, align='center')
+    ax.set_yticks(y_pos)
+    ax.set_yticklabels(name_list)
+    ax.invert_yaxis()
+    ax.set_xlabel('')
+    ax.set_title('Total Hours per Member')
+    return fig
+
+
+
 if __name__ == '__main__':
     print('Starting')
     app.run(debug=True)
